@@ -103,7 +103,7 @@ El backend corresponde a la IP privada del Container Instance
 ![Docker](https://img.shields.io/badge/Container-Docker-blue)
 ![WordPress](https://img.shields.io/badge/App-WordPress-blue)
 
-Este proyecto demuestra cómo **contenedizar una aplicación monolítica (WordPress + MySQL)** y desplegarla en **Oracle Cloud Infrastructure (OCI)** utilizando:
+Este lab muestra cómo **convertir una aplicación monolítica (WordPress + MySQL) en contenedores** y desplegarla en **Oracle Cloud Infrastructure (OCI)** utilizando:
 
 - OCI Container Registry (OCIR)
 - OCI Container Instances
@@ -161,8 +161,7 @@ Container Instance
 
 Antes de comenzar necesitas:
 
-- Cuenta en Oracle Cloud
-- Docker instalado
+- Docker instalado (recomendado utilizar Cloud Shell de OCI)
 - Auth Token de OCI
 - OCI CLI (opcional)
 
