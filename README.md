@@ -1,7 +1,7 @@
 # Bienvenidos a Oracle Training Labs
 ## Laboratorio de Container Instances 
 ## Despliegue de Wordpress
-#### El laboratorio consiste en el despliegue de Wordpress en una subred privada utilizando una Base de Datos MySQL creada como otro container dentro de la misma instancia. La seguridad lo mas importante !!! 
+#### El laboratorio consiste en el despliegue de Wordpress en una subred privada utilizando una Base de Datos MySQL creada en otro container dentro de la misma instancia. La seguridad lo mas importante !!! 
 
 #### Para acceder a nuestro sistema Wordpress vamos a crear un Load Balancer publico protegido por un WAF (Web Appplication Firewall) como proteccion a posibles ciberataques
 
@@ -74,6 +74,8 @@ Seleccionamos la VCN y la subred publica ceeada durante los prerrequisitos
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_3.jpg)
 
 Luego seleccionamos el algoritmo de balanceo del trafico y el protocolo y puerto para el Health Check
+En la imagen se muestra el Health check utilizando el protocolo TCP/80 codide de respuesta 200
+S podria utilizar HTTP/80 con codigo de respuesta 302
 
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_4.jpg)
 
