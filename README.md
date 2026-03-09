@@ -95,8 +95,281 @@ El backend corresponde a la IP privada del Container Instance
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_8.jpg)
 
 
+#Practica avanzada - de Monolito a Contenedor
 
+# Arquitectura OCI
 
+Este proyecto despliega una aplicación **WordPress contenedorizada** utilizando servicios de **Oracle Cloud Infrastructure (OCI)**.
 
+La arquitectura utiliza:
 
+- OCI Container Registry (OCIR)
+- OCI Container Instances
+- OCI Load Balancer
+- Virtual Cloud Network (VCN)
 
+El objetivo es demostrar cómo **contenedizar una aplicación monolítica** y desplegarla en una infraestructura cloud moderna utilizando contenedores.
+
+---
+
+# Diagrama de Arquitectura
+
+```mermaid
+flowchart TB
+
+    User[Internet User]
+
+    LB[OCI Public Load Balancer]
+
+    subgraph VCN[Virtual Cloud Network]
+
+        subgraph PublicSubnet[Public Subnet]
+
+            CI[Container Instance]
+
+            WP[WordPress Container]
+            DB[MySQL Container]
+
+        end
+
+    end
+
+    User --> LB
+    LB --> CI
+
+    CI --> WP
+    CI --> DB
+
+    WP --> DB
+```
+
+---
+
+# Descripción de la Arquitectura
+
+La arquitectura se compone de los siguientes elementos:
+
+### Internet
+
+Los usuarios acceden a la aplicación WordPress desde Internet mediante HTTP.
+
+### OCI Load Balancer
+
+El **Load Balancer público** actúa como punto de entrada a la aplicación.
+
+Funciones principales:
+
+- Exponer la aplicación a Internet
+- Distribuir tráfico hacia el backend
+- Ejecutar health checks
+- Proteger el backend de acceso directo
+
+Configuración típica:
+
+- Listener HTTP puerto 80
+- Backend apuntando al Container Instance
+- Health check en `/health.html`
+
+---
+
+### Virtual Cloud Network (VCN)
+
+La **VCN** es la red virtual donde se despliegan los recursos de la aplicación.
+
+Componentes:
+
+- Subnet pública
+- Security Lists o Network Security Groups
+- Rutas hacia Internet Gateway
+
+La VCN permite aislar y controlar el tráfico entre recursos.
+
+---
+
+### Public Subnet
+
+El **Container Instance** se despliega en una **subnet pública** para permitir que el Load Balancer pueda enrutar tráfico hacia él.
+
+Reglas comunes:
+
+Entrada:
+
+- HTTP 80 desde Load Balancer
+
+Salida:
+
+- Acceso a Internet para descargar imágenes del registry
+
+---
+
+### Container Instance
+
+El **Container Instance** ejecuta múltiples contenedores dentro del mismo entorno.
+
+En este proyecto contiene:
+
+- WordPress container
+- MySQL container
+
+Ambos contenedores comparten:
+
+- red
+- localhost
+- ciclo de vida
+
+Esto permite que WordPress se conecte a MySQL usando:
+
+```
+localhost:3306
+```
+
+---
+
+### WordPress Container
+
+El contenedor WordPress ejecuta la aplicación web.
+
+Imagen base:
+
+```
+wordpress:php8.2-apache
+```
+
+Configuración principal:
+
+Variables de entorno:
+
+```
+WORDPRESS_DB_HOST=localhost
+WORDPRESS_DB_USER=wpuser
+WORDPRESS_DB_PASSWORD=wppassword
+WORDPRESS_DB_NAME=wpdb
+```
+
+Puerto expuesto:
+
+```
+80
+```
+
+Además se incluye un endpoint de salud:
+
+```
+/health.html
+```
+
+Este endpoint es utilizado por el Load Balancer para verificar que el contenedor está funcionando correctamente.
+
+---
+
+### MySQL Container
+
+El contenedor MySQL actúa como base de datos para WordPress.
+
+Imagen base:
+
+```
+mysql:8.0
+```
+
+Variables de entorno:
+
+```
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_DATABASE=wpdb
+MYSQL_USER=wpuser
+MYSQL_PASSWORD=wppassword
+```
+
+Puerto expuesto:
+
+```
+3306
+```
+
+---
+
+# Flujo de tráfico
+
+El flujo de solicitudes funciona de la siguiente manera:
+
+1. El usuario accede a la aplicación desde su navegador.
+2. La solicitud llega al **OCI Load Balancer**.
+3. El Load Balancer enruta el tráfico al **Container Instance**.
+4. La solicitud es atendida por el **WordPress container**.
+5. WordPress se conecta a **MySQL** utilizando `localhost`.
+6. MySQL devuelve los datos necesarios para generar la página.
+7. WordPress responde al usuario.
+
+Flujo simplificado:
+
+```
+Internet
+   │
+OCI Load Balancer
+   │
+Container Instance
+   ├── WordPress
+   └── MySQL
+```
+
+---
+
+# Beneficios de esta arquitectura
+
+Esta arquitectura proporciona varias ventajas:
+
+### Contenedorización
+
+Permite empaquetar la aplicación con todas sus dependencias.
+
+### Portabilidad
+
+Las imágenes Docker pueden ejecutarse en cualquier entorno compatible.
+
+### Despliegue rápido
+
+Las imágenes pueden desplegarse rápidamente desde **OCI Container Registry**.
+
+### Simplificación de infraestructura
+
+El servicio **Container Instances** elimina la necesidad de administrar máquinas virtuales.
+
+### Escalabilidad
+
+La arquitectura puede evolucionar hacia:
+
+- múltiples container instances
+- balanceo de carga avanzado
+- base de datos gestionada
+
+---
+
+# Mejoras recomendadas para producción
+
+Para un entorno productivo se recomienda:
+
+- Utilizar **OCI MySQL Database Service** en lugar de MySQL en contenedor
+- Configurar almacenamiento persistente
+- Implementar gestión de secretos
+- Habilitar observabilidad y logging
+- Configurar HTTPS con certificados TLS
+- Implementar auto scaling
+
+---
+
+# Arquitectura final desplegada
+
+```
+Internet
+   │
+OCI Load Balancer
+   │
+VCN
+   │
+Public Subnet
+   │
+Container Instance
+   ├── WordPress Container
+   └── MySQL Container
+```
