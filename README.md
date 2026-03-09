@@ -1,4 +1,4 @@
-# Bienvenidos a Oracle Racing To The Cloud
+# Bienvenidos a Oracle Training Labs
 ## Laboratorio de Container Instances 
 ## Despliegue de Wordpress
 #### El laboratorio consiste en el despliegue de Wordpress en una subred privada utilizando una Base de Datos MySQL creada como otro container dentro de la misma instancia. La seguridad lo mas importante !!! 
