@@ -353,26 +353,6 @@ OCI Console
 
 ---
 
-# Crear red (VCN)
-
-En OCI Console:
-
-```
-Networking
-→ Virtual Cloud Networks
-```
-
-Crear:
-
-- VCN
-- Public Subnet
-- Internet Gateway
-- Route Table
-
-Esto permitirá que el Load Balancer sea accesible desde Internet.
-
----
-
 # Crear Container Instance
 
 Ir a:
