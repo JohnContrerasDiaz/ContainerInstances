@@ -95,35 +95,35 @@ El backend corresponde a la IP privada del Container Instance
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_8.jpg)
 
 
-#Practica avanzada - de Monolito a Contenedor
+# Practica avanzada - de Monolito a Contenedor
 
-# Arquitectura OCI
+# WordPress on Oracle Cloud Container Instances
 
-Este proyecto despliega una aplicación **WordPress contenedorizada** utilizando servicios de **Oracle Cloud Infrastructure (OCI)**.
+![OCI](https://img.shields.io/badge/Oracle%20Cloud-OCI-red)
+![Docker](https://img.shields.io/badge/Container-Docker-blue)
+![WordPress](https://img.shields.io/badge/App-WordPress-blue)
 
-La arquitectura utiliza:
+Este proyecto demuestra cómo **contenedizar una aplicación monolítica (WordPress + MySQL)** y desplegarla en **Oracle Cloud Infrastructure (OCI)** utilizando:
 
 - OCI Container Registry (OCIR)
 - OCI Container Instances
 - OCI Load Balancer
 - Virtual Cloud Network (VCN)
 
-El objetivo es demostrar cómo **contenedizar una aplicación monolítica** y desplegarla en una infraestructura cloud moderna utilizando contenedores.
-
 ---
 
-# Diagrama de Arquitectura
+# Arquitectura
 
 ```mermaid
 flowchart TB
 
     User[Internet User]
 
-    LB[OCI Public Load Balancer]
+    LB[OCI Load Balancer]
 
     subgraph VCN[Virtual Cloud Network]
 
-        subgraph PublicSubnet[Public Subnet]
+        subgraph Subnet[Public Subnet]
 
             CI[Container Instance]
 
@@ -143,165 +143,7 @@ flowchart TB
     WP --> DB
 ```
 
----
-
-# Descripción de la Arquitectura
-
-La arquitectura se compone de los siguientes elementos:
-
-### Internet
-
-Los usuarios acceden a la aplicación WordPress desde Internet mediante HTTP.
-
-### OCI Load Balancer
-
-El **Load Balancer público** actúa como punto de entrada a la aplicación.
-
-Funciones principales:
-
-- Exponer la aplicación a Internet
-- Distribuir tráfico hacia el backend
-- Ejecutar health checks
-- Proteger el backend de acceso directo
-
-Configuración típica:
-
-- Listener HTTP puerto 80
-- Backend apuntando al Container Instance
-- Health check en `/health.html`
-
----
-
-### Virtual Cloud Network (VCN)
-
-La **VCN** es la red virtual donde se despliegan los recursos de la aplicación.
-
-Componentes:
-
-- Subnet pública
-- Security Lists o Network Security Groups
-- Rutas hacia Internet Gateway
-
-La VCN permite aislar y controlar el tráfico entre recursos.
-
----
-
-### Public Subnet
-
-El **Container Instance** se despliega en una **subnet pública** para permitir que el Load Balancer pueda enrutar tráfico hacia él.
-
-Reglas comunes:
-
-Entrada:
-
-- HTTP 80 desde Load Balancer
-
-Salida:
-
-- Acceso a Internet para descargar imágenes del registry
-
----
-
-### Container Instance
-
-El **Container Instance** ejecuta múltiples contenedores dentro del mismo entorno.
-
-En este proyecto contiene:
-
-- WordPress container
-- MySQL container
-
-Ambos contenedores comparten:
-
-- red
-- localhost
-- ciclo de vida
-
-Esto permite que WordPress se conecte a MySQL usando:
-
-```
-localhost:3306
-```
-
----
-
-### WordPress Container
-
-El contenedor WordPress ejecuta la aplicación web.
-
-Imagen base:
-
-```
-wordpress:php8.2-apache
-```
-
-Configuración principal:
-
-Variables de entorno:
-
-```
-WORDPRESS_DB_HOST=localhost
-WORDPRESS_DB_USER=wpuser
-WORDPRESS_DB_PASSWORD=wppassword
-WORDPRESS_DB_NAME=wpdb
-```
-
-Puerto expuesto:
-
-```
-80
-```
-
-Además se incluye un endpoint de salud:
-
-```
-/health.html
-```
-
-Este endpoint es utilizado por el Load Balancer para verificar que el contenedor está funcionando correctamente.
-
----
-
-### MySQL Container
-
-El contenedor MySQL actúa como base de datos para WordPress.
-
-Imagen base:
-
-```
-mysql:8.0
-```
-
-Variables de entorno:
-
-```
-MYSQL_ROOT_PASSWORD=rootpassword
-MYSQL_DATABASE=wpdb
-MYSQL_USER=wpuser
-MYSQL_PASSWORD=wppassword
-```
-
-Puerto expuesto:
-
-```
-3306
-```
-
----
-
-# Flujo de tráfico
-
-El flujo de solicitudes funciona de la siguiente manera:
-
-1. El usuario accede a la aplicación desde su navegador.
-2. La solicitud llega al **OCI Load Balancer**.
-3. El Load Balancer enruta el tráfico al **Container Instance**.
-4. La solicitud es atendida por el **WordPress container**.
-5. WordPress se conecta a **MySQL** utilizando `localhost`.
-6. MySQL devuelve los datos necesarios para generar la página.
-7. WordPress responde al usuario.
-
-Flujo simplificado:
+Flujo de tráfico:
 
 ```
 Internet
@@ -315,61 +157,380 @@ Container Instance
 
 ---
 
-# Beneficios de esta arquitectura
+# Prerrequisitos
 
-Esta arquitectura proporciona varias ventajas:
+Antes de comenzar necesitas:
 
-### Contenedorización
+- Cuenta en Oracle Cloud
+- Docker instalado
+- Auth Token de OCI
+- OCI CLI (opcional)
 
-Permite empaquetar la aplicación con todas sus dependencias.
+Servicios OCI utilizados:
 
-### Portabilidad
-
-Las imágenes Docker pueden ejecutarse en cualquier entorno compatible.
-
-### Despliegue rápido
-
-Las imágenes pueden desplegarse rápidamente desde **OCI Container Registry**.
-
-### Simplificación de infraestructura
-
-El servicio **Container Instances** elimina la necesidad de administrar máquinas virtuales.
-
-### Escalabilidad
-
-La arquitectura puede evolucionar hacia:
-
-- múltiples container instances
-- balanceo de carga avanzado
-- base de datos gestionada
+- Container Registry
+- Container Instances
+- Load Balancer
+- VCN
 
 ---
 
-# Mejoras recomendadas para producción
+# Estructura del repositorio
 
-Para un entorno productivo se recomienda:
-
-- Utilizar **OCI MySQL Database Service** en lugar de MySQL en contenedor
-- Configurar almacenamiento persistente
-- Implementar gestión de secretos
-- Habilitar observabilidad y logging
-- Configurar HTTPS con certificados TLS
-- Implementar auto scaling
+```
+oci-wordpress-demo/
+│
+├ docker/
+│   ├ Dockerfile.wordpress
+│   └ Dockerfile.mysql
+│
+├ health/
+│   └ health.html
+│
+└ README.md
+```
 
 ---
 
-# Arquitectura final desplegada
+# Health Check Endpoint
+
+Archivo:
+
+```
+health/health.html
+```
+
+Contenido:
+
+```html
+OK
+```
+
+Este endpoint será utilizado por el **Load Balancer** para verificar la salud del contenedor.
+
+---
+
+# Dockerfile WordPress
+
+Archivo:
+
+```
+docker/Dockerfile.wordpress
+```
+
+Contenido:
+
+```dockerfile
+FROM wordpress:php8.2-apache
+
+COPY health/health.html /var/www/html/health.html
+
+ENV WORDPRESS_DB_HOST=localhost
+ENV WORDPRESS_DB_USER=wpuser
+ENV WORDPRESS_DB_NAME=wpdb
+
+EXPOSE 80
+```
+
+Explicación:
+
+- Usa la imagen oficial de WordPress
+- Agrega un endpoint de health check
+- Expone el puerto 80
+
+---
+
+# Dockerfile MySQL
+
+Archivo:
+
+```
+docker/Dockerfile.mysql
+```
+
+Contenido:
+
+```dockerfile
+FROM mysql:8.0
+
+ENV MYSQL_DATABASE=wpdb
+ENV MYSQL_USER=wpuser
+
+EXPOSE 3306
+```
+
+Las contraseñas se configurarán en runtime mediante variables de entorno.
+
+---
+
+# Construir las imágenes
+
+Desde el directorio raíz del proyecto ejecutar:
+
+```bash
+docker build -t wordpress-demo -f docker/Dockerfile.wordpress .
+docker build -t mysql-demo -f docker/Dockerfile.mysql .
+```
+
+Verificar:
+
+```bash
+docker images
+```
+
+---
+
+# Login en OCI Container Registry (OCIR)
+
+Autenticarse contra el registry.
+
+Formato:
+
+```
+docker login <region>.ocir.io
+```
+
+Ejemplo:
+
+```bash
+docker login iad.ocir.io
+```
+
+Usuario:
+
+```
+<tenancy-namespace>/<username>
+```
+
+Password:
+
+```
+OCI Auth Token
+```
+
+El Auth Token se genera desde:
+
+```
+OCI Console
+→ User Settings
+→ Auth Tokens
+```
+
+---
+
+# Taggear imágenes para OCIR
+
+Formato requerido por OCI:
+
+```
+<region>.ocir.io/<tenancy-namespace>/<repository>/<image>:<tag>
+```
+
+Ejemplo:
+
+```bash
+docker tag wordpress-demo iad.ocir.io/mytenancy/demo/wordpress:1.0
+docker tag mysql-demo iad.ocir.io/mytenancy/demo/mysql:1.0
+```
+
+---
+
+# Subir imágenes a OCIR
+
+Subir imágenes al registry:
+
+```bash
+docker push iad.ocir.io/mytenancy/demo/wordpress:1.0
+docker push iad.ocir.io/mytenancy/demo/mysql:1.0
+```
+
+Las imágenes quedarán disponibles en:
+
+```
+OCI Console
+→ Developer Services
+→ Container Registry
+```
+
+---
+
+# Crear red (VCN)
+
+En OCI Console:
+
+```
+Networking
+→ Virtual Cloud Networks
+```
+
+Crear:
+
+- VCN
+- Public Subnet
+- Internet Gateway
+- Route Table
+
+Esto permitirá que el Load Balancer sea accesible desde Internet.
+
+---
+
+# Crear Container Instance
+
+Ir a:
+
+```
+Developer Services
+→ Container Instances
+```
+
+Crear una instancia con **dos contenedores**.
+
+---
+
+## MySQL Container
+
+Imagen:
+
+```
+<region>.ocir.io/mytenancy/demo/mysql:1.0
+```
+
+Variables de entorno:
+
+```
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_PASSWORD=wppassword
+MYSQL_DATABASE=wpdb
+MYSQL_USER=wpuser
+```
+
+Puerto:
+
+```
+3306
+```
+
+---
+
+## WordPress Container
+
+Imagen:
+
+```
+<region>.ocir.io/mytenancy/demo/wordpress:1.0
+```
+
+Variables:
+
+```
+WORDPRESS_DB_HOST=localhost
+WORDPRESS_DB_USER=wpuser
+WORDPRESS_DB_PASSWORD=wppassword
+WORDPRESS_DB_NAME=wpdb
+```
+
+Puerto:
+
+```
+80
+```
+
+---
+
+# Comunicación entre contenedores
+
+Los contenedores dentro del mismo **Container Instance** comparten red.
+
+WordPress puede conectarse a MySQL usando:
+
+```
+localhost:3306
+```
+
+---
+
+# Crear Load Balancer
+
+Ir a:
+
+```
+Networking
+→ Load Balancers
+```
+
+Crear **Public Load Balancer**.
+
+Configuración:
+
+Listener:
+
+```
+Protocol: HTTP
+Port: 80
+```
+
+Backend:
+
+```
+Target: Container Instance
+Port: 80
+```
+
+---
+
+# Configurar Health Check
+
+Path:
+
+```
+/health.html
+```
+
+Expected response:
+
+```
+HTTP 200
+```
+
+Esto permite al Load Balancer verificar que WordPress está funcionando correctamente.
+
+---
+
+# Acceder a WordPress
+
+Una vez desplegado el Load Balancer:
+
+```
+http://<public-ip>
+```
+
+Aparecerá el instalador de WordPress.
+
+---
+
+# Resultado final
+
+Arquitectura desplegada:
 
 ```
 Internet
    │
 OCI Load Balancer
    │
-VCN
-   │
-Public Subnet
-   │
 Container Instance
-   ├── WordPress Container
-   └── MySQL Container
+   ├ WordPress
+   └ MySQL
 ```
+
+---
+
+# Mejoras para producción
+
+Para un entorno productivo se recomienda:
+
+- Base de datos gestionada (OCI MySQL DB System)
+- Persistencia de almacenamiento
+- HTTPS con certificados TLS
+- Gestión segura de secretos
+- Observabilidad y logging
+- Escalamiento horizontal
