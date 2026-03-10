@@ -73,7 +73,7 @@ Seleccionamos la VCN y la subred publica ceeada durante los prerrequisitos
 
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_3.jpg)
 
-Luego seleccionamos el algoritmo de balanceo del trafico y el protocolo y puerto para el Health Check. En la imagen se muestra el Health check utilizando el protocolo TCP/80 con codigo de respuesta 200.
+Luego seleccionamos el algoritmo de balanceo del trafico y el protocolo y puerto para el  Check. En la imagen se muestra el  check utilizando el protocolo TCP/80 con codigo de respuesta 200.
 Tambien se podria utilizar HTTP/80 con codigo de respuesta 302.
 
 ![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_4.jpg)
@@ -222,7 +222,7 @@ Contenido:
 ```dockerfile
 FROM wordpress:php8.2-apache
 
-COPY health/health.html /var/www/html/health.html
+COPY health.html /var/www/html/health.html
 
 ENV WORDPRESS_DB_HOST=localhost
 ENV WORDPRESS_DB_USER=wpuser
