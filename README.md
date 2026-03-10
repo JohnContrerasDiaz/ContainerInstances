@@ -196,7 +196,7 @@ oci-wordpress-demo/
 Archivo:
 
 ```
-health/health.html
+health.html
 ```
 
 Contenido:
@@ -214,7 +214,7 @@ Este endpoint será utilizado por el **Load Balancer** para verificar la salud d
 Archivo:
 
 ```
-docker/Dockerfile.wordpress
+Dockerfile.wordpress
 ```
 
 Contenido:
@@ -244,7 +244,7 @@ Explicación:
 Archivo:
 
 ```
-docker/Dockerfile.mysql
+Dockerfile.mysql
 ```
 
 Contenido:
@@ -281,7 +281,7 @@ docker images
 
 # Login en OCI Container Registry (OCIR)
 
-Autenticarse contra el registry.
+Autenticarse contra el registry de OCI.
 
 Formato:
 
@@ -298,7 +298,7 @@ docker login iad.ocir.io
 Usuario:
 
 ```
-<tenancy-namespace>/<username>
+<tenancy-namespace>/<domain>/<username>
 ```
 
 Password:
