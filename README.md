@@ -323,7 +323,9 @@ OCI Console
 
 # Taggear imágenes para OCIR
 
-Formato requerido por OCI:
+- Obtener tenancy-namespace desde: Profile --> Tenancy --> Object storage namespace
+
+- Formato requerido por OCI:
 
 ```
 <region>.ocir.io/<tenancy-namespace>/<repository>/<image>:<tag>
@@ -332,15 +334,15 @@ Formato requerido por OCI:
 Ejemplo:
 
 ```bash
-docker tag wordpress-demo iad.ocir.io/mytenancy/demo/wordpress:1.0
-docker tag mysql-demo iad.ocir.io/mytenancy/demo/mysql:1.0
+docker tag wordpress-demo iad.ocir.io/<tenancy-namespace>/demo/wordpress:1.0
+docker tag mysql-demo iad.ocir.io/<tenancy-namespace>/demo/mysql:1.0
 ```
 
 ---
 
 # Subir imágenes a OCIR
 
-- Obtener namespace desde: Profile --> Tenancy --> Object storage namespace
+
 - Subir imágenes al registry:
 
 ```bash
