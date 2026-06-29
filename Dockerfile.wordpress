@@ -1,4 +1,4 @@
-FROM wordpress:php8.2-apache
+FROM docker.io/library/wordpress:php8.2-apache
 
 COPY health.html /var/www/html/health.html
 
