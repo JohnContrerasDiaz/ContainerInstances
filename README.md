@@ -177,7 +177,6 @@ Servicios OCI utilizados:
 # Estructura del repositorio
 
 - mkdir docker
-- mkdir health
 
 ```
 oci-wordpress-demo/
