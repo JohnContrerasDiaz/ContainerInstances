@@ -162,6 +162,7 @@ Container Instance
 Antes de comenzar necesitas:
 
 - Docker instalado (recomendado utilizar Cloud Shell de OCI)
+- Cuenta en docker hub
 - Auth Token de OCI
 - OCI CLI (opcional)
 
@@ -263,6 +264,9 @@ Las contraseñas se configurarán en runtime mediante variables de entorno.
 ---
 
 # Construir las imágenes
+
+Hacer login en docker hun con los usuarios creados previamente:
+docker login docker.io
 
 Desde el directorio raíz del proyecto ejecutar:
 
