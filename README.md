@@ -185,9 +185,7 @@ oci-wordpress-demo/
 ├ docker/
 │   ├ Dockerfile.wordpress
 │   └ Dockerfile.mysql
-│
-├ health/
-│   └ health.html
+|   └ health.html
 │
 └ README.md
 ```
