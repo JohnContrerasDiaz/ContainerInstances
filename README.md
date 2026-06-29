@@ -221,7 +221,7 @@ Dockerfile.wordpress
 Contenido:
 
 ```dockerfile
-FROM wordpress:php8.2-apache
+FROM docker.io/library/wordpress:php8.2-apache
 
 COPY health.html /var/www/html/health.html
 
@@ -251,7 +251,7 @@ Dockerfile.mysql
 Contenido:
 
 ```dockerfile
-FROM mysql:8.0
+FROM docker.io/library/mysql:8.0
 
 ENV MYSQL_DATABASE=wpdb
 ENV MYSQL_USER=wpuser
