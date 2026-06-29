@@ -302,6 +302,7 @@ docker login iad.ocir.io
 Usuario:
 
 ```
+Obtener tenancy-namespace desde: Profile --> Tenancy --> Object storage namespace
 <tenancy-namespace>/<domain>/<username>
 ```
 
