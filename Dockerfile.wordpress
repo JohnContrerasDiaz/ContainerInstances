@@ -1,0 +1,9 @@
+FROM wordpress:php8.2-apache
+
+COPY health.html /var/www/html/health.html
+
+ENV WORDPRESS_DB_HOST=localhost
+ENV WORDPRESS_DB_USER=wpuser
+ENV WORDPRESS_DB_NAME=wpdb
+
+EXPOSE 80

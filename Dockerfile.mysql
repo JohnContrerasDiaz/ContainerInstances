@@ -1,0 +1,6 @@
+FROM mysql:8.0
+
+ENV MYSQL_DATABASE=wpdb
+ENV MYSQL_USER=wpuser
+
+EXPOSE 3306
