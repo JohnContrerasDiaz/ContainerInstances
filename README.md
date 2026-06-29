@@ -341,7 +341,7 @@ docker tag mysql-demo iad.ocir.io/mytenancy/demo/mysql:1.0
 # Subir imágenes a OCIR
 
 - Obtener namespace desde: Profile --> Tenancy --> Object storage namespace
-Subir imágenes al registry:
+  Subir imágenes al registry:
 
 ```bash
 docker push iad.ocir.io/namespace/demo/wordpress:1.0
