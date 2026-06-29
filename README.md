@@ -304,6 +304,8 @@ Usuario:
 ```
 Obtener tenancy-namespace desde: Profile --> Tenancy --> Object storage namespace
 <tenancy-namespace>/<domain>/<username>
+ejemplo
+axlcwp0sg7zw/user@mail.com
 ```
 
 Password:
