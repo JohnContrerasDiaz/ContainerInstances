@@ -363,6 +363,23 @@ OCI Console
 
 ---
 
+# Creacion de Dynamic Group y Policy
+
+Ir a:
+
+```
+Identity & Security
+Domains (Compartment root) -> Default
+→ Dynamic Groups
+→ Crear DG con la siguiente clausula: ALL {resource.type = 'computecontainerinstance'}
+
+Luego
+Identity & Security
+Policies -> crear policy con el texto: Allow dynamic-group NOMBRE-DG to read repos in compartment PoC-FGN
+
+```
+
+
 # Crear Container Instance
 
 Ir a:
