@@ -1,0 +1,3 @@
+# Artefactos locales generados por el despliegue OKE
+.env.oke
+k8s/wordpress-oke.rendered.yaml

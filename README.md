@@ -5,30 +5,30 @@
 
 #### Para acceder a nuestro sistema Wordpress vamos a crear un Load Balancer publico protegido por un WAF (Web Appplication Firewall) como proteccion a posibles ciberataques
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/Arquitectura.jpg)
+![](images/Arquitectura.jpg)
 
 #### Prerrequisitos para la realizacion del Laboratorio
 * Creacion de VCN y subredes, una publica y una privada
 * Creacion de Internet Gateway y entrada en la tabla de rutas para la subred publica
 * Creacion de NAT Gateway y entrada en la tabla de rutas para la subred privada
 + Configuracion de Security Lists:
-  + Para la subred publica permitir el trafico por los puertos 80 y 3306
+  + Para la subred publica permitir el trafico HTTP por el puerto 80. No exponga MySQL (3306) a Internet.
   + Para la subred privada permitir todo el trafico desde la subred publica
   
 # 1. Creación de Container Instance
 
 ### Menu principal >Developer Services > Container instances
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_instance.jpg)
+![](images/create_container_instance.jpg)
 
 ## Configuración de la instancia
 Debemos ingresar la informacion del nombre de la instancia, AD, Shape y capacidades de computo(OCPU y Memoria RAM)
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_instance1.jpg)
+![](images/create_container_instance1.jpg)
 
 En la parte de Networking seleccionamos la VCN y la subred privada
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_ci_10.jpg)
+![](images/create_ci_10.jpg)
 
 ### Configuración de los contenedores
 En esta parte vamos a asignar los nombres de los contenedores, para ello seleccionamos las imagenes a utilizar y creamos las variables de ambiente que necesita el contenedor para funcionar adecuadamente. Para el laboratorio vamos a utilizar las imagenes publicas del Docker Hub
@@ -36,26 +36,26 @@ En esta parte vamos a asignar los nombres de los contenedores, para ello selecci
 ### El primer container a crear es el de MySQL
 Asignamos un nombre al container y seleccionamos la imagen a descargar desde el Docker Hub
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_2.jpg)
+![](images/create_container_2.jpg)
 
 Configuracion de las variables de ambiente necesarias para el despliegue del container MySQL
 Click en crear another container
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_4.jpg)
+![](images/create_container_4.jpg)
 
 ### El segundo container a crear es el de Wordpress
 Asignamos un nombre al container y seleccionamos la imagen a descargar desde el Docker Hub
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_5.jpg)
+![](images/create_container_5.jpg)
 
 Configuracion de las variables de ambiente necesarias para el despliegue del container Wordpress
 El valor de la variable WORDPRESS_DB_HOST corresponde a la IP seleccionada durante la creacion del Container Instance en la parte de Networking
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_ci_11.jpg)
+![](images/create_ci_11.jpg)
 
 Click en Create
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_container_7.jpg)
+![](images/create_container_7.jpg)
 
 # 2. Creación del Load Balancer
 
@@ -63,36 +63,36 @@ Click en Create
 
 ### Menu principal > Networking > Load Balancers
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_1.jpg)
+![](images/create_lb_1.jpg)
 
 Asignamos el nombre del LB y seleccionamos las opciones de visibilidad publica e IP
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_2.jpg)
+![](images/create_lb_2.jpg)
 
 Seleccionamos la VCN y la subred publica ceeada durante los prerrequisitos
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_3.jpg)
+![](images/create_lb_3.jpg)
 
 Luego seleccionamos el algoritmo de balanceo del trafico y el protocolo y puerto para el  Check. En la imagen se muestra el  check utilizando el protocolo TCP/80 con codigo de respuesta 200.
 Tambien se podria utilizar HTTP/80 con codigo de respuesta 302.
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_4.jpg)
+![](images/create_lb_4.jpg)
 
 Configuramos el listener de tipo HTTP (las peticiones ingresan por el puerto 80)
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_5.jpg)
+![](images/create_lb_5.jpg)
 
 Activamos los logs del LB
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_6.jpg)
+![](images/create_lb_6.jpg)
 
 Adicionamos el Backend, este corresponde a la Container Instance
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_7.jpg)
+![](images/create_lb_7.jpg)
 
 El backend corresponde a la IP privada del Container Instance
 
-![](https://github.com/johncdoracle/RacingToCloud/blob/main/images/create_lb_8.jpg)
+![](images/create_lb_8.jpg)
 
 
 # Practica avanzada - de Monolito a Contenedor
@@ -177,15 +177,14 @@ Servicios OCI utilizados:
 
 # Estructura del repositorio
 
-- mkdir docker
-
 ```
 oci-wordpress-demo/
 │
-├ docker/
-│   ├ Dockerfile.wordpress
-│   └ Dockerfile.mysql
-|   └ health.html
+├ Dockerfile.wordpress
+├ Dockerfile.mysql
+├ health.html
+├ k8s/
+│   └ wordpress-oke.yaml.template
 │
 └ README.md
 ```
@@ -271,8 +270,8 @@ Hacer login en docker hub con los usuarios creados previamente:
 Desde el directorio raíz del proyecto ejecutar:
 
 ```bash
-docker build -t wordpress-demo -f docker/Dockerfile.wordpress .
-docker build -t mysql-demo -f docker/Dockerfile.mysql .
+docker build -t wordpress-demo -f Dockerfile.wordpress .
+docker build -t mysql-demo -f Dockerfile.mysql .
 ```
 
 Verificar:
@@ -349,8 +348,8 @@ docker tag mysql-demo iad.ocir.io/<tenancy-namespace>/demo/mysql:1.0
 - Subir imágenes al registry:
 
 ```bash
-docker push iad.ocir.io/namespace/demo/wordpress:1.0
-docker push iad.ocir.io/namespace/demo/mysql:1.0
+docker push iad.ocir.io/<tenancy-namespace>/demo/wordpress:1.0
+docker push iad.ocir.io/<tenancy-namespace>/demo/mysql:1.0
 ```
 
 Las imágenes quedarán disponibles en:
@@ -540,3 +539,203 @@ Para un entorno productivo se recomienda:
 - Gestión segura de secretos
 - Observabilidad y logging
 - Escalamiento horizontal
+
+---
+
+# Parte final: WordPress como microservicios en OKE
+
+En esta parte se reutilizan las imagenes de WordPress y MySQL publicadas en OCIR y se despliegan como cargas separadas en Oracle Kubernetes Engine (OKE). MySQL queda accesible solamente dentro del cluster y WordPress se publica mediante un `Service` de tipo `LoadBalancer`.
+
+> Este laboratorio usa dos `Deployments` con una replica cada uno y volumenes persistentes de bloque. Es adecuado para aprendizaje, no representa por si solo una arquitectura WordPress altamente disponible.
+
+## 1. Crear el cluster con el wizard Quick Create
+
+1. En OCI Console abra **Developer Services > Kubernetes Clusters (OKE)**.
+2. Seleccione **Create cluster**.
+3. En el wizard seleccione **Quick Create** y luego **Proceed**.
+4. Defina el nombre `oke-wordpress`, el compartimento del laboratorio y una version soportada de Kubernetes que no sea *preview*.
+5. Para ejecutar el laboratorio desde OCI Cloud Shell, seleccione un **Kubernetes API endpoint publico**. Para un endpoint privado se requiere conectividad privada o Bastion.
+6. Seleccione **Managed nodes**, una shape disponible y al menos un nodo. Revise el costo estimado antes de crear.
+7. Seleccione **Next**, revise los recursos y seleccione **Create cluster**.
+8. Espere hasta que el cluster y el node pool aparezcan en estado **Active**. Quick Create crea tambien la VCN, gateways, subred de workers y subred de load balancers.
+
+Flujo didactico del laboratorio:
+
+```mermaid
+flowchart LR
+    A[OCI Console] --> B[Wizard OKE Quick Create]
+    B --> C[Cluster Active]
+    C --> D[OCI Cloud Shell]
+    D --> E[Configurar kubectl]
+    E --> F[Crear Secrets]
+    F --> G[Desplegar WordPress y MySQL]
+    G --> H[OCI Load Balancer]
+```
+
+## 2. Conectar OCI Cloud Shell al cluster
+
+En la pagina del cluster seleccione **Access cluster > Cloud Shell Access > Launch Cloud Shell**. Copie y ejecute el comando presentado por OCI, similar a:
+
+```bash
+oci ce cluster create-kubeconfig \
+  --cluster-id <cluster-ocid> \
+  --file "$HOME/.kube/config" \
+  --region <region> \
+  --token-version 2.0.0 \
+  --kube-endpoint PUBLIC_ENDPOINT
+
+kubectl get nodes
+kubectl get storageclass oci-bv
+```
+
+Todos los nodos deben estar `Ready` y la clase de almacenamiento `oci-bv` debe existir antes de continuar.
+
+## 3. Preparar las variables del despliegue
+
+Clone este repositorio en Cloud Shell y ejecute desde su raiz:
+
+```bash
+cp .env.oke.example .env.oke
+chmod 600 .env.oke
+vi .env.oke
+```
+
+Complete los valores reales de OCIR. `OCIR_USERNAME` usa el formato mostrado en el perfil de OCI; si utiliza un dominio de identidad, normalmente es `dominio/usuario`. En los comandos siguientes se antepone automaticamente `<tenancy-namespace>/` al crear el secreto de OCIR. Para evitar errores durante la practica, conserve `MYSQL_ROOT_PASSWORD=rootpassword` y `WORDPRESS_DB_PASSWORD=wppassword`.
+
+Importe las variables en la sesion:
+
+```bash
+set -a
+source .env.oke
+set +a
+```
+
+No comparta ni confirme `.env.oke`; contiene el Auth Token de OCI y contrasenas de base de datos.
+
+Valide que no queden marcadores y que las imagenes existan antes de crear recursos:
+
+```bash
+if grep -Eq '^[A-Z_]+=.*<[^>]+>' .env.oke; then
+  echo "ERROR: complete todos los valores <...> de .env.oke"
+  return 1 2>/dev/null || exit 1
+fi
+
+printf '%s' "$OCIR_AUTH_TOKEN" | docker login "${OCIR_REGION_KEY}.ocir.io" \
+  --username "${OCIR_TENANCY_NAMESPACE}/${OCIR_USERNAME}" \
+  --password-stdin
+
+docker pull "$WORDPRESS_IMAGE"
+docker pull "$MYSQL_IMAGE"
+```
+
+## 4. Revisar y desplegar
+
+Primero renderice el manifiesto reemplazando las rutas de las imagenes de OCIR:
+
+```bash
+sed \
+  -e "s|__WORDPRESS_IMAGE__|${WORDPRESS_IMAGE}|g" \
+  -e "s|__MYSQL_IMAGE__|${MYSQL_IMAGE}|g" \
+  k8s/wordpress-oke.yaml.template \
+  > k8s/wordpress-oke.rendered.yaml
+
+kubectl apply --dry-run=client -f k8s/wordpress-oke.rendered.yaml
+```
+
+Revise las imagenes renderizadas y confirme que Cloud Shell apunta al cluster correcto:
+
+```bash
+grep 'image:' k8s/wordpress-oke.rendered.yaml
+kubectl config current-context
+kubectl get nodes
+```
+
+Cree el namespace del laboratorio:
+
+```bash
+kubectl create namespace "$OKE_NAMESPACE" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Cree el secreto para descargar las imagenes privadas desde OCIR:
+
+```bash
+kubectl -n "$OKE_NAMESPACE" create secret docker-registry ocir-secret \
+  --docker-server="${OCIR_REGION_KEY}.ocir.io" \
+  --docker-username="${OCIR_TENANCY_NAMESPACE}/${OCIR_USERNAME}" \
+  --docker-password="$OCIR_AUTH_TOKEN" \
+  --docker-email="$OCIR_EMAIL" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Cree el secreto con las variables educativas de WordPress y MySQL:
+
+```bash
+kubectl -n "$OKE_NAMESPACE" create secret generic wordpress-db \
+  --from-literal=WORDPRESS_DB_NAME="$WORDPRESS_DB_NAME" \
+  --from-literal=WORDPRESS_DB_USER="$WORDPRESS_DB_USER" \
+  --from-literal=WORDPRESS_DB_PASSWORD="$WORDPRESS_DB_PASSWORD" \
+  --from-literal=MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Los secretos se crean directamente en Kubernetes y no se escriben en el manifiesto. Despliegue los recursos:
+
+```bash
+kubectl -n "$OKE_NAMESPACE" apply --dry-run=server \
+  -f k8s/wordpress-oke.rendered.yaml
+
+kubectl -n "$OKE_NAMESPACE" apply \
+  -f k8s/wordpress-oke.rendered.yaml
+
+kubectl -n "$OKE_NAMESPACE" rollout status deployment/mysql --timeout=10m
+kubectl -n "$OKE_NAMESPACE" rollout status deployment/wordpress --timeout=10m
+```
+
+## 5. Verificar WordPress
+
+```bash
+kubectl -n "$OKE_NAMESPACE" get pods,svc,pvc
+kubectl -n "$OKE_NAMESPACE" get events --sort-by=.lastTimestamp
+kubectl -n "$OKE_NAMESPACE" get svc wordpress -w
+```
+
+Cuando `EXTERNAL-IP` tenga un valor, abra:
+
+```text
+http://<EXTERNAL-IP>
+```
+
+Si aparece `ImagePullBackOff`, valide la ruta de las imagenes, el region key de OCIR y el Auth Token. Si un PVC permanece `Pending`, valide que el cluster tenga la clase `oci-bv` y capacidad/cuota de Block Volume.
+
+## 6. Arquitectura desplegada
+
+```mermaid
+flowchart LR
+    U[Usuario] --> LB[OCI Load Balancer]
+    LB --> WPS[Service wordpress]
+    WPS --> WP[Deployment WordPress]
+    WP --> MS[Service mysql privado]
+    MS --> MY[Deployment MySQL]
+    WP --> WPD[(OCI Block Volume)]
+    MY --> MYD[(OCI Block Volume)]
+    OCIR[OCIR] --> WP
+    OCIR --> MY
+```
+
+## 7. Limpieza
+
+Para eliminar las cargas y los load balancers creados por el manifiesto:
+
+```bash
+kubectl delete namespace "$OKE_NAMESPACE"
+```
+
+Revise en OCI Console que el Load Balancer y los Block Volumes hayan sido eliminados. El cluster OKE y la red creados por Quick Create se eliminan por separado desde OCI Console cuando termine el laboratorio.
+
+## Referencias oficiales
+
+- [Crear un cluster OKE con Quick Create](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingclusterusingoke_topic-Using_the_Console_to_create_a_Quick_Cluster_with_Default_Settings.htm)
+- [Configurar acceso al cluster](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengdownloadkubeconfigfile.htm)
+- [Consumir imagenes de OCIR desde OKE](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengpullingimagesfromocir.htm)
+- [Provisionar PVC con OCI Block Volume](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingpersistentvolumeclaim_topic-Provisioning_PVCs_on_BV.htm)
