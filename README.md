@@ -561,16 +561,7 @@ En esta parte se reutilizan las imagenes de WordPress y MySQL publicadas en OCIR
 
 Flujo didactico del laboratorio:
 
-```mermaid
-flowchart LR
-    A[OCI Console] --> B[Wizard OKE Quick Create]
-    B --> C[Cluster Active]
-    C --> D[OCI Cloud Shell]
-    D --> E[Configurar kubectl]
-    E --> F[Crear Secrets]
-    F --> G[Desplegar WordPress y MySQL]
-    G --> H[OCI Load Balancer]
-```
+![Flujo didactico del laboratorio WordPress en OKE](images/flujo-laboratorio-wordpress-oke.png)
 
 ## 2. Conectar OCI Cloud Shell al cluster
 
@@ -710,18 +701,9 @@ Si aparece `ImagePullBackOff`, valide la ruta de las imagenes, el region key de 
 
 ## 6. Arquitectura desplegada
 
-```mermaid
-flowchart LR
-    U[Usuario] --> LB[OCI Load Balancer]
-    LB --> WPS[Service wordpress]
-    WPS --> WP[Deployment WordPress]
-    WP --> MS[Service mysql privado]
-    MS --> MY[Deployment MySQL]
-    WP --> WPD[(OCI Block Volume)]
-    MY --> MYD[(OCI Block Volume)]
-    OCIR[OCIR] --> WP
-    OCIR --> MY
-```
+![Arquitectura WordPress en Oracle Kubernetes Engine](images/arquitectura-wordpress-oke.png)
+
+Los archivos fuente SVG tambien estan disponibles en `images/` para reutilizarlos sin perdida de calidad.
 
 ## 7. Limpieza
 
